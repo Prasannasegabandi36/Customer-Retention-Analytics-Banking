@@ -11,18 +11,24 @@ st.set_page_config(
 )
 
 # ---------------- CUSTOM CSS ----------------
+# ---------------- CUSTOM CSS ----------------
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(135deg, #061627 0%, #0B2D4D 38%, #F4F8FB 38%, #F4F8FB 100%);
+    background: linear-gradient(135deg, #061627 0%, #0B2D4D 50%, #003B73 100%);
+    color: white;
 }
 
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #061627, #0B2D4D);
+    background: linear-gradient(180deg, #020B14, #061627, #0B2D4D);
 }
 
 [data-testid="stSidebar"] * {
     color: white !important;
+}
+
+.block-container {
+    padding-top: 2rem;
 }
 
 .big-title {
@@ -39,13 +45,13 @@ st.markdown("""
 }
 
 .kpi-card {
-    background: linear-gradient(135deg, #003B73, #0074D9);
+    background: linear-gradient(135deg, #005B96, #00A6FB);
     padding: 24px;
     border-radius: 22px;
     color: white;
     text-align: center;
-    box-shadow: 0px 10px 25px rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.25);
 }
 
 .kpi-value {
@@ -59,38 +65,42 @@ st.markdown("""
 }
 
 .insight-box {
-    background: linear-gradient(135deg, #EAF4FF, #FFFFFF);
+    background: rgba(255,255,255,0.95);
     padding: 20px;
-    border-left: 7px solid #0074D9;
+    border-left: 7px solid #00A6FB;
     border-radius: 14px;
     font-size: 16px;
-    box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.20);
     color: #0B1F3A;
 }
 
 .warning-box {
-    background: linear-gradient(135deg, #FFF2D9, #FFFFFF);
+    background: rgba(255,244,229,0.98);
     padding: 20px;
-    border-left: 7px solid #FF9800;
+    border-left: 7px solid #FFB703;
     border-radius: 14px;
     font-size: 16px;
-    box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.20);
     color: #0B1F3A;
 }
 
 .success-box {
-    background: linear-gradient(135deg, #E8FFF1, #FFFFFF);
+    background: rgba(232,255,241,0.98);
     padding: 20px;
     border-left: 7px solid #00A86B;
     border-radius: 14px;
     font-size: 16px;
-    box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.20);
     color: #0B1F3A;
 }
 
 h1, h2, h3 {
-    color: #073B66;
+    color: white !important;
     font-weight: 800;
+}
+
+p, label, span {
+    color: inherit;
 }
 
 .stTabs [data-baseweb="tab-list"] {
@@ -98,20 +108,31 @@ h1, h2, h3 {
 }
 
 .stTabs [data-baseweb="tab"] {
-    background-color: #EAF4FF;
+    background-color: rgba(255,255,255,0.18);
     border-radius: 14px;
     padding: 12px 18px;
     font-weight: 700;
-}
-
-.stTabs [aria-selected="true"] {
-    background: linear-gradient(135deg, #003B73, #0074D9);
     color: white;
 }
 
-.block-container {
-    padding-top: 2rem;
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, #00A6FB, #0074D9);
+    color: white;
 }
+
+[data-testid="stMetric"] {
+    background: rgba(255,255,255,0.15);
+    padding: 18px;
+    border-radius: 18px;
+    color: white;
+    box-shadow: 0px 6px 18px rgba(0,0,0,0.25);
+}
+
+[data-testid="stDataFrame"] {
+    background: white;
+    border-radius: 15px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
