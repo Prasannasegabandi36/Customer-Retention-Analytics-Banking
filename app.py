@@ -13,54 +13,104 @@ st.set_page_config(
 # ---------------- CUSTOM CSS ----------------
 st.markdown("""
 <style>
-.main {
-    background-color: #f5f7fb;
+.stApp {
+    background: linear-gradient(135deg, #061627 0%, #0B2D4D 38%, #F4F8FB 38%, #F4F8FB 100%);
 }
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #061627, #0B2D4D);
+}
+
+[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
 .big-title {
-    font-size: 38px;
-    font-weight: 800;
-    color: #0B1F3A;
+    font-size: 42px;
+    font-weight: 900;
+    color: white;
+    padding-top: 10px;
 }
+
 .sub-title {
     font-size: 18px;
-    color: #4A5568;
+    color: #D7E9FF;
+    margin-bottom: 25px;
 }
+
 .kpi-card {
-    background: linear-gradient(135deg, #0B1F3A, #005B96);
-    padding: 22px;
-    border-radius: 18px;
+    background: linear-gradient(135deg, #003B73, #0074D9);
+    padding: 24px;
+    border-radius: 22px;
     color: white;
     text-align: center;
-    box-shadow: 0px 6px 18px rgba(0,0,0,0.18);
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.18);
 }
+
 .kpi-value {
-    font-size: 30px;
-    font-weight: 800;
+    font-size: 32px;
+    font-weight: 900;
 }
+
 .kpi-label {
     font-size: 14px;
-    color: #DDEEFF;
+    color: #E8F4FF;
 }
+
 .insight-box {
-    background-color: #EAF3FF;
-    padding: 18px;
-    border-left: 6px solid #005B96;
-    border-radius: 10px;
+    background: linear-gradient(135deg, #EAF4FF, #FFFFFF);
+    padding: 20px;
+    border-left: 7px solid #0074D9;
+    border-radius: 14px;
     font-size: 16px;
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+    color: #0B1F3A;
 }
+
 .warning-box {
-    background-color: #FFF4E5;
-    padding: 18px;
-    border-left: 6px solid #FF9800;
-    border-radius: 10px;
+    background: linear-gradient(135deg, #FFF2D9, #FFFFFF);
+    padding: 20px;
+    border-left: 7px solid #FF9800;
+    border-radius: 14px;
     font-size: 16px;
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+    color: #0B1F3A;
 }
+
 .success-box {
-    background-color: #EAF8F0;
-    padding: 18px;
-    border-left: 6px solid #2E8B57;
-    border-radius: 10px;
+    background: linear-gradient(135deg, #E8FFF1, #FFFFFF);
+    padding: 20px;
+    border-left: 7px solid #00A86B;
+    border-radius: 14px;
     font-size: 16px;
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+    color: #0B1F3A;
+}
+
+h1, h2, h3 {
+    color: #073B66;
+    font-weight: 800;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background-color: #EAF4FF;
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-weight: 700;
+}
+
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, #003B73, #0074D9);
+    color: white;
+}
+
+.block-container {
+    padding-top: 2rem;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -108,49 +158,46 @@ df["Retention_Intelligence_Score"] = (
     np.where(df["Balance"] > 100000, 10, 0)
 )
 
+# Safer than np.select for Streamlit Cloud / NumPy compatibility
 df["Risk_Level"] = "High Risk"
-
+df.loc[df["Retention_Intelligence_Score"] >= 80, "Risk_Level"] = "Low Risk"
 df.loc[
-    df["Retention_Intelligence_Score"] >= 80,
-    "Risk_Level"
-] = "Low Risk"
-
-df.loc[
-    (df["Retention_Intelligence_Score"] >= 50) & 
+    (df["Retention_Intelligence_Score"] >= 50) &
     (df["Retention_Intelligence_Score"] < 80),
     "Risk_Level"
 ] = "Medium Risk"
 
 # ---------------- SIDEBAR ----------------
-st.sidebar.title("🔍 Banking Filters")
+st.sidebar.title("🏦 Control Panel")
+st.sidebar.markdown("Use filters to explore banking retention behavior.")
 
 geography = st.sidebar.multiselect(
-    "Select Geography",
+    "🌍 Select Geography",
     df["Geography"].unique(),
     default=df["Geography"].unique()
 )
 
 gender = st.sidebar.multiselect(
-    "Select Gender",
+    "👤 Select Gender",
     df["Gender"].unique(),
     default=df["Gender"].unique()
 )
 
 active_status = st.sidebar.multiselect(
-    "Active Status",
+    "⚡ Active Status",
     df["IsActiveMember"].unique(),
     default=df["IsActiveMember"].unique()
 )
 
 product_range = st.sidebar.slider(
-    "Number of Products",
+    "📦 Number of Products",
     int(df["NumOfProducts"].min()),
     int(df["NumOfProducts"].max()),
     (int(df["NumOfProducts"].min()), int(df["NumOfProducts"].max()))
 )
 
 balance_threshold = st.sidebar.slider(
-    "Minimum Balance",
+    "💰 Minimum Balance",
     0,
     int(df["Balance"].max()),
     0
@@ -165,17 +212,21 @@ filtered_df = df[
 ]
 
 # ---------------- HEADER ----------------
-st.markdown('<div class="big-title">🏦 Customer Intelligence for Banking Retention</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="sub-title">Behavioral Analytics • Product Utilization • Churn Risk Intelligence • Retention Strategy</div>',
+    '<div class="big-title">🏦 Customer Retention Intelligence Platform</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="sub-title">💼 Banking Analytics • 📊 Churn Intelligence • 🧠 Customer Segmentation • 🚀 Retention Strategy</div>',
     unsafe_allow_html=True
 )
 
 st.write("")
 
-# ---------------- KPI SECTION ----------------
+# ---------------- KPI CALCULATIONS ----------------
 total_customers = len(filtered_df)
-churned = int(filtered_df["Exited"].sum())
+churned = int(filtered_df["Exited"].sum()) if total_customers > 0 else 0
 retained = total_customers - churned
 churn_rate = round((churned / total_customers) * 100, 2) if total_customers > 0 else 0
 retention_rate = round(100 - churn_rate, 2)
@@ -186,14 +237,15 @@ high_value_risk = filtered_df[
     (filtered_df["IsActiveMember"] == 0)
 ]
 
+# ---------------- KPI CARDS ----------------
 c1, c2, c3, c4, c5 = st.columns(5)
 
 for col, label, value in [
-    (c1, "Total Customers", f"{total_customers:,}"),
-    (c2, "Churn Rate", f"{churn_rate}%"),
-    (c3, "Retained Customers", f"{retained:,}"),
-    (c4, "Churned Customers", f"{churned:,}"),
-    (c5, "Avg Retention Score", avg_score)
+    (c1, "👥 Total Customers", f"{total_customers:,}"),
+    (c2, "📉 Churn Rate", f"{churn_rate}%"),
+    (c3, "✅ Retained Customers", f"{retained:,}"),
+    (c4, "⚠️ Churned Customers", f"{churned:,}"),
+    (c5, "🧠 Avg Retention Score", avg_score)
 ]:
     col.markdown(
         f"""
@@ -210,11 +262,11 @@ st.write("")
 
 # ---------------- TABS ----------------
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📊 Executive Overview",
+    "📊 Executive Command Center",
     "🧠 Customer Intelligence",
-    "🚨 Premium Risk",
-    "💪 Relationship Analytics",
-    "🎯 Strategy"
+    "🚨 Premium Risk Radar",
+    "💎 Relationship Strength",
+    "🎯 Strategy Playbook"
 ])
 
 # ---------------- TAB 1 ----------------
@@ -239,7 +291,7 @@ with tab1:
 
     with col2:
         geo_churn = filtered_df.groupby("Geography")["Exited"].mean().reset_index()
-        geo_churn["Churn Rate (%)"] = geo_churn["Exited"] * 100
+        geo_churn["Churn Rate (%)"] = (geo_churn["Exited"] * 100).round(2)
 
         fig = px.bar(
             geo_churn,
@@ -272,7 +324,7 @@ with tab2:
             0: "Inactive Customer",
             1: "Active Customer"
         })
-        engagement["Churn Rate (%)"] = engagement["Exited"] * 100
+        engagement["Churn Rate (%)"] = (engagement["Exited"] * 100).round(2)
 
         fig = px.bar(
             engagement,
@@ -285,7 +337,7 @@ with tab2:
 
     with col2:
         product = filtered_df.groupby("NumOfProducts")["Exited"].mean().reset_index()
-        product["Churn Rate (%)"] = product["Exited"] * 100
+        product["Churn Rate (%)"] = (product["Exited"] * 100).round(2)
 
         fig = px.bar(
             product,
@@ -297,7 +349,7 @@ with tab2:
         st.plotly_chart(fig, use_container_width=True)
 
     profile = filtered_df.groupby("Engagement_Profile")["Exited"].mean().reset_index()
-    profile["Churn Rate (%)"] = profile["Exited"] * 100
+    profile["Churn Rate (%)"] = (profile["Exited"] * 100).round(2)
 
     fig = px.bar(
         profile,
@@ -321,52 +373,55 @@ with tab2:
 
 # ---------------- TAB 3 ----------------
 with tab3:
-    st.header("🚨 Premium Customer Risk Monitor")
+    st.header("🚨 Premium Customer Risk Radar")
 
     st.markdown(
         """
         <div class="warning-box">
-        ⚠️ <b>Premium Risk Logic:</b> Customers with balance above 100,000 but inactive status 
+        ⚠️ <b>Premium Risk Logic:</b> Customers with balance above 100,000 and inactive status 
         are classified as high-value disengaged customers.
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.metric("High-Value Disengaged Customers", len(high_value_risk))
+    st.metric("💰 High-Value Disengaged Customers", len(high_value_risk))
 
-    risk_geo = high_value_risk.groupby("Geography")["CustomerId"].count().reset_index()
-    risk_geo.columns = ["Geography", "Risk Customers"]
+    if len(high_value_risk) > 0:
+        risk_geo = high_value_risk.groupby("Geography")["CustomerId"].count().reset_index()
+        risk_geo.columns = ["Geography", "Risk Customers"]
 
-    fig = px.bar(
-        risk_geo,
-        x="Geography",
-        y="Risk Customers",
-        text="Risk Customers",
-        title="Premium Risk Customers by Geography"
-    )
-    st.plotly_chart(fig, use_container_width=True)
+        fig = px.bar(
+            risk_geo,
+            x="Geography",
+            y="Risk Customers",
+            text="Risk Customers",
+            title="Premium Risk Customers by Geography"
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
-    st.dataframe(
-        high_value_risk[
-            [
-                "CustomerId", "Surname", "Geography", "Gender",
-                "Age", "Balance", "NumOfProducts",
-                "IsActiveMember", "EstimatedSalary", "Exited"
-            ]
-        ].head(50),
-        use_container_width=True
-    )
+        st.dataframe(
+            high_value_risk[
+                [
+                    "CustomerId", "Surname", "Geography", "Gender",
+                    "Age", "Balance", "NumOfProducts",
+                    "IsActiveMember", "EstimatedSalary", "Exited"
+                ]
+            ].head(50),
+            use_container_width=True
+        )
+    else:
+        st.success("No premium risk customers found for selected filters.")
 
 # ---------------- TAB 4 ----------------
 with tab4:
-    st.header("💪 Relationship Strength & Retention Intelligence")
+    st.header("💎 Relationship Strength & Retention Intelligence")
 
     col1, col2 = st.columns(2)
 
     with col1:
         rel = filtered_df.groupby("Relationship_Category")["Exited"].mean().reset_index()
-        rel["Churn Rate (%)"] = rel["Exited"] * 100
+        rel["Churn Rate (%)"] = (rel["Exited"] * 100).round(2)
 
         fig = px.bar(
             rel,
@@ -407,23 +462,23 @@ with tab4:
 
 # ---------------- TAB 5 ----------------
 with tab5:
-    st.header("🎯 Strategic Retention Recommendations")
+    st.header("🎯 Strategic Retention Playbook")
 
     st.markdown(
         """
-        ### 1. Customer Reactivation Strategy
+        ### 1. 🔄 Customer Reactivation Strategy
         Target inactive customers with personalized reactivation campaigns, relationship manager calls, and reward-based engagement offers.
 
-        ### 2. Product Bundling Optimization
+        ### 2. 📦 Product Bundling Optimization
         Identify single-product customers and recommend suitable second products such as credit cards, savings plans, or advisory services.
 
-        ### 3. Premium Customer Protection
+        ### 3. 💰 Premium Customer Protection
         High-balance inactive customers should be treated as silent churn risks and monitored through proactive retention programs.
 
-        ### 4. Relationship Intelligence System
+        ### 4. 🧠 Relationship Intelligence System
         Use the Relationship Strength Index to classify customers into weak, medium, and strong relationship groups.
 
-        ### 5. Churn Prevention Dashboard
+        ### 5. 🚨 Churn Prevention Dashboard
         The dashboard can support early-warning systems for customer loyalty teams and banking CRM departments.
         """
     )
