@@ -170,8 +170,6 @@ Customers were grouped into:
 ```text
 CSV Dataset
    ↓
-MySQL Analysis
-   ↓
 Google Colab EDA
    ↓
 Feature Engineering
