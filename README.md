@@ -49,7 +49,6 @@ The goal is to identify:
 
 ## 🛠️ Tools & Technologies
 
-- **MySQL** – SQL analysis and KPI validation
 - **Python** – Data analysis and feature engineering
 - **Pandas / NumPy** – Data processing
 - **Plotly** – Interactive visualizations
