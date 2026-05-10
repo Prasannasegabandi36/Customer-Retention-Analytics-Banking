@@ -108,18 +108,18 @@ df["Retention_Intelligence_Score"] = (
     np.where(df["Balance"] > 100000, 10, 0)
 )
 
-df["Risk_Level"] = np.select(
-    [
-        (df["Retention_Intelligence_Score"] >= 80),
-        (df["Retention_Intelligence_Score"] >= 50),
-        (df["Retention_Intelligence_Score"] < 50)
-    ],
-    [
-        "Low Risk",
-        "Medium Risk",
-        "High Risk"
-    ]
-)
+df["Risk_Level"] = "High Risk"
+
+df.loc[
+    df["Retention_Intelligence_Score"] >= 80,
+    "Risk_Level"
+] = "Low Risk"
+
+df.loc[
+    (df["Retention_Intelligence_Score"] >= 50) & 
+    (df["Retention_Intelligence_Score"] < 80),
+    "Risk_Level"
+] = "Medium Risk"
 
 # ---------------- SIDEBAR ----------------
 st.sidebar.title("🔍 Banking Filters")
